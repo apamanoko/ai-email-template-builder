@@ -4,11 +4,15 @@ import { ConvexProvider, ConvexReactClient } from "convex/react";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { UserDetailContext } from '@/context/UserDetailContext';
 import { ScreenSizeContext } from '@/context/ScreenSizeContext';
+import { DragDropLayoutElement, DragElementLayout } from '@/context/DragElementLayout';
+import { EmailTemplateContext } from '@/context/EmailTemplateContext';
 
 function Provider({children}) {
   const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL);
   const [userDetail, setUserDetail]=useState();
   const [screenSize, setScreenSize]=useState('desktop');
+  const [dragElementLayout, setDragElementLayout]=useState();
+  const [emailTemplate, setEmailTemplate]=useState([]);
 
   // ログインしてるかしてないかprovider起動後一回チェック？
   useEffect(()=>{
@@ -27,7 +31,11 @@ function Provider({children}) {
         <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}>
             <UserDetailContext.Provider value={{userDetail,setUserDetail}}>
                 <ScreenSizeContext.Provider value={{screenSize, setScreenSize}}>
-                    <div>{children}</div>  
+                    <DragElementLayout.Provider value={{dragElementLayout, setDragElementLayout}}>
+                        <EmailTemplateContext.Provider value={{emailTemplate, setEmailTemplate}}>
+                            <div>{children}</div>  
+                        </EmailTemplateContext.Provider>
+                    </DragElementLayout.Provider>
                 </ScreenSizeContext.Provider>
             </UserDetailContext.Provider>
         </GoogleOAuthProvider>
@@ -42,4 +50,10 @@ export const useUserDetailContext=()=>{
 }
 export const useScreenSizeContext=()=>{
     return useContext(ScreenSizeContext);
+}
+export const useDragElementLayoutContext=()=>{
+    return useContext(DragElementLayout);
+}
+export const useEmailTemplateContext=()=>{
+    return useContext(EmailTemplateContext);
 }
